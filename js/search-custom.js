@@ -155,6 +155,7 @@ function addData(result) {
 		$('#shopRentTableInput').parent("label.btn.localtion").addClass("active").removeClass("hidden");
 		var rentData = result.shop_rent.filter(item => item.layout_name.indexOf('CryAstro') < 0);
 		$('#shopRentTable').bootstrapTable('load', rentData);
+		$('#shopRentTable').closest('.bootstrap-table.bootstrap4').removeClass("hidden");
 	}
 
 	var checkedbox = $("input:checkbox[name='options']:checked");
