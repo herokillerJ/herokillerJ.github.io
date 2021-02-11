@@ -69,7 +69,7 @@ function initSelect2(data){
 	  	return null;
 	  }
 	  $('#keywords').select2({
-	  	placeholder: '请输入中/英关键字并选择  （例：箭头）',
+	  	placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
 	  	theme: "bootstrap4",
 	  	data: data,
 	  	matcher: customMatcher,
