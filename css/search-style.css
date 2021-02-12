@@ -70,6 +70,12 @@ p {
 /*---------------------------------------
      GENERAL               
   -----------------------------------------*/
+/* 表格悬停行颜色 */
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+color: #55ffff;
+cursor: pointer;
+}
 
 html {
 	-webkit-font-smoothing: antialiased;
@@ -106,8 +112,8 @@ a:focus {
 }
 
 .overlay {
-	background: linear-gradient(to top right, #d2b48c, #000000);
-	opacity: 0.8;
+	background: linear-gradient(to top right, #5d4f3e, #000000);
+	opacity: 0.9;
 	position: absolute;
 	top: 0;
 	right: 0;

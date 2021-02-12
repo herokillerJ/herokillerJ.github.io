@@ -10,7 +10,7 @@ function formatState(state) {
 	$state.find("span").text(state.text);
 	return $state;
 };
-
+//初始化搜索框,匹配器
 function initSelect2(data){
 	$.fn.select2.amd.require(['select2/diacritics'], function (DIACRITICS) {
 	  // stripDiacritics code copied from select2
@@ -19,7 +19,6 @@ function initSelect2(data){
 	    function match(a) {
 	      return DIACRITICS[a] || a;
 	    }
-	
 	    return text.replace(/[^\u0000-\u007E]/g, match);
 	  }
 	
@@ -38,7 +37,7 @@ function initSelect2(data){
 	  		for (var c = data.children.length - 1; c >= 0; c--) {
 	  			var child = data.children[c];
 	  
-	  			var matches = matcher(params, child);
+	  			var matches = customMatcher(params, child);
 	  
 	  			// If there wasn't a match, remove the object in the array
 	  			if (matches == null) {
@@ -52,15 +51,17 @@ function initSelect2(data){
 	  		}
 	  
 	  		// If there were no matching children, check just the plain object
-	  		return matcher(params, match);
+	  		return customMatcher(params, match);
 	  	}
 		//匹配算法
 	    //去掉特殊符号之后的原文
 	  	var original = stripDiacritics(data.text).toUpperCase();
+		if (original == null || original.trim() === '') {
+			return null;
+		}
+	  	var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
 		//去掉特殊符号之后的输入关键字
 	  	var term = stripDiacritics(params.term).toUpperCase();
-		//将汉字转换成拼音
-		var pinyinOriginal = PinyinHelper.convertToPinyinString(original, '', PinyinFormat.WITHOUT_TONE).toUpperCase();
 		//支持中文英文拼音
 	  	if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
 	  		return data;
@@ -71,7 +72,6 @@ function initSelect2(data){
 	  $('#keywords').select2({
 	  	placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
 	  	theme: "bootstrap4",
-	  	data: data,
 	  	matcher: customMatcher,
 	  	width: '400px',
 	  	templateSelection: formatState
@@ -108,7 +108,11 @@ function getLocalData(url) {
 
 function mapIndexData(arrayData){
 	var data = $.map(arrayData, function(obj) {
-		obj.text = obj.name_cn + "[" + obj.name + "]";
+		var text = obj.name_cn + "[" + obj.name + "]";
+		obj.text = text;
+		var pinyin =PinyinHelper.convertToPinyinString(obj.name_cn, '', PinyinFormat.WITHOUT_TONE);
+		pinyin = pinyin.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
+		$('#keywords').append('<option data-pinyin="'+pinyin+'" data-path="'+ obj.path +'" value="'+obj.name+'">'+text+'</option>');
 		return obj;
 	});
 	return data;
