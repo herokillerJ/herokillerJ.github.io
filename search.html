@@ -121,9 +121,14 @@ https://templatemo.com/tm-521-get-ready
                     <h1>星际公民商品搜索器</h1>
                     <h5>数据版本：<span id="version"></span></h5>
                     <div class="row">
+						<select id="typeSelect" class="js-example-basic-single" name="type">
+						    <option/>
+						</select>
                         <select id="keywords" class="js-example-basic-single" name="state">
                             <option/>
                         </select>
+						<input id="condition" type="hidden"/>
+						<input id="all-data" type="hidden"/>
                     </div>
                     <div id="load" class="row hidden">
                         <div class="col">
@@ -178,48 +183,18 @@ https://templatemo.com/tm-521-get-ready
 <script>
     $('#init').removeClass("hidden");
     $(document).ready(function () {
-        $.when(getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data/index.json")
-            , getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data/ext_index.json"))
-            .then(function (mainResult, extResult) {
-                $('#version').text(mainResult.version);
-                mapIndexData(mainResult.index);
-                mapIndexData(extResult.index);
-                $('#init').addClass("hidden");
-                initSelect2();
-            }, function () {
-                console.log('error...')
-            });
-
-        $('#keywords').on('select2:select', function (e) {
-            $('#load').removeClass("hidden");
-            $('.sc-data').addClass("hidden");
-            $('table.location').each(function (index, ele) {
-                $(ele).closest('.bootstrap-table.bootstrap4').addClass("hidden");
-            });
-            var data = e.params.data;
-			var dataPath = $(data.element).data("path");
-            var version = $('#version').text();
-            $.ajax({
-                //请求方式
-                type: "GET",
-                dataType: "json",
-                //请求地址
-                url: "https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@" + version + "/" + dataPath,
-                //请求成功
-                success: function (result) {
-                    addData(result);
-                },
-                //请求失败，包含具体的错误信息
-                error: function (e) {
-                    console.log(e.status);
-                    console.log(e.responseText);
-                },
-                //请求完成
-                complete: function (e) {
-                    $('#load').addClass("hidden");
-                }
-            });
-        });
+        $.when(getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@latest/index.json")
+            , getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@latest/ext_index.json"))
+		.then(function (mainResult, extResult) {
+			$('#version').text(mainResult.version);
+			mapIndexData(mainResult.index);
+			$('#init').addClass("hidden");
+			mapTypeData(mainResult["type_list"]);
+			initSelect2();
+			initTypeSelect();
+		}, function () {
+			console.log('error...')
+		});
     });
 </script>
 

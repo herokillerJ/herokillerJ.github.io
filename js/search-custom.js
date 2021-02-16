@@ -10,72 +10,163 @@ function formatState(state) {
 	$state.find("span").text(state.text);
 	return $state;
 };
+
+
+function stripDiacritics(str){
+	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+
 //初始化搜索框,匹配器
-function initSelect2(data){
-	$.fn.select2.amd.require(['select2/diacritics'], function (DIACRITICS) {
-	  // stripDiacritics code copied from select2
-	  function stripDiacritics (text) {
-	    // Used 'uni range + named function' from http://jsperf.com/diacritics/18
-	    function match(a) {
-	      return DIACRITICS[a] || a;
-	    }
-	    return text.replace(/[^\u0000-\u007E]/g, match);
-	  }
-	
-	  function customMatcher(params, data) {
-	  	// Always return the object if there is nothing to compare
-	  	if (params.term == null || params.term.trim() === '') {
-	  		return data;
-	  	}
-	  	// Do a recursive check for options with children
-	  	if (data.children && data.children.length > 0) {
-	  		// Clone the data object if there are children
-	  		// This is required as we modify the object to remove any non-matches
-	  		var match = $.extend(true, {}, data);
-	  
-	  		// Check each child of the option
-	  		for (var c = data.children.length - 1; c >= 0; c--) {
-	  			var child = data.children[c];
-	  
-	  			var matches = customMatcher(params, child);
-	  
-	  			// If there wasn't a match, remove the object in the array
-	  			if (matches == null) {
-	  				match.children.splice(c, 1);
-	  			}
-	  		}
-	  
-	  		// If any children matched, return the new object
-	  		if (match.children.length > 0) {
-	  			return match;
-	  		}
-	  
-	  		// If there were no matching children, check just the plain object
-	  		return customMatcher(params, match);
-	  	}
+// function initSelect2(data) {
+// 	$.fn.select2.amd.require(['select2/diacritics'], function(DIACRITICS) {
+// 		// stripDiacritics code copied from select2
+// 		function stripDiacritics(text) {
+// 			// Used 'uni range + named function' from http://jsperf.com/diacritics/18
+// 			function match(a) {
+// 				return DIACRITICS[a] || a;
+// 			}
+// 			return text.replace(/[^\u0000-\u007E]/g, match);
+// 		}
+// 		function customMatcher(params, data) {
+// 			// Always return the object if there is nothing to compare
+// 			if (params.term == null || params.term.trim() === '') {
+// 				return data;
+// 			}
+// 			// Do a recursive check for options with children
+// 			if (data.children && data.children.length > 0) {
+// 				// Clone the data object if there are children
+// 				// This is required as we modify the object to remove any non-matches
+// 				var match = $.extend(true, {}, data);
+		
+// 				// Check each child of the option
+// 				for (var c = data.children.length - 1; c >= 0; c--) {
+// 					var child = data.children[c];
+		
+// 					var matches = customMatcher(params, child);
+		
+// 					// If there wasn't a match, remove the object in the array
+// 					if (matches == null) {
+// 						match.children.splice(c, 1);
+// 					}
+// 				}
+		
+// 				// If any children matched, return the new object
+// 				if (match.children.length > 0) {
+// 					return match;
+// 				}
+		
+// 				// If there were no matching children, check just the plain object
+// 				return customMatcher(params, match);
+// 			}
+// 			//匹配算法
+// 			//去掉特殊符号之后的原文
+// 			if (data.text == null || data.text.trim() === '') {
+// 				return null;
+// 			}
+// 			var original = stripDiacritics(data.text).toUpperCase();
+			
+// 			var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
+// 			//去掉特殊符号之后的输入关键字
+// 			var term = stripDiacritics(params.term).toUpperCase();
+// 			//支持中文英文拼音
+// 			if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
+// 				return data;
+// 			}
+// 			// If it doesn't contain the term, don't return anything
+// 			return null;
+// 		}
+// 		$('#keywords').select2({
+// 			placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
+// 			theme: "bootstrap4",
+// 			matcher: customMatcher,
+// 			width: '400px',
+// 			templateSelection: formatState
+// 		});
+		
+// 	});
+// }
+
+
+
+function customMatcher(params, data) {
+		// Always return the object if there is nothing to compare
+		if (params.term == null || params.term.trim() === '') {
+			return data;
+		}
 		//匹配算法
-	    //去掉特殊符号之后的原文
-	  	var original = stripDiacritics(data.text).toUpperCase();
-		if (original == null || original.trim() === '') {
+		//去掉特殊符号之后的原文
+		if (data.text == null || data.text.trim() === '') {
 			return null;
 		}
-	  	var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
+		var original = stripDiacritics(data.text).toUpperCase();
+		
+		var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
 		//去掉特殊符号之后的输入关键字
-	  	var term = stripDiacritics(params.term).toUpperCase();
+		var term = stripDiacritics(params.term).toUpperCase();
 		//支持中文英文拼音
-	  	if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
-	  		return data;
-	  	}
-	  	// If it doesn't contain the term, don't return anything
-	  	return null;
-	  }
-	  $('#keywords').select2({
-	  	placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
-	  	theme: "bootstrap4",
-	  	matcher: customMatcher,
-	  	width: '400px',
-	  	templateSelection: formatState
-	  });
+		if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
+			return data;
+		}
+		// If it doesn't contain the term, don't return anything
+		return null;
+}
+
+//初始化搜索框,匹配器
+function initSelect2() {
+	$('#keywords').select2({
+		placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
+		theme: "bootstrap4",
+		matcher: customMatcher,
+		width: '400px',
+		templateSelection: formatState
+	});
+	$('#keywords').on('select2:select', function (e) {
+	    $('#load').removeClass("hidden");
+	    $('.sc-data').addClass("hidden");
+	    $('table.location').each(function (index, ele) {
+	        $(ele).closest('.bootstrap-table.bootstrap4').addClass("hidden");
+	    });
+	    var data = e.params.data;
+		var dataPath = $(data.element).data("path");
+	    $.ajax({
+	        //请求方式
+	        type: "GET",
+	        dataType: "json",
+	        //请求地址
+	        url: "https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@latest"+ "/" + dataPath,
+	        //请求成功
+	        success: function (result) {
+	            addData(result);
+	        },
+	        //请求失败，包含具体的错误信息
+	        error: function (e) {
+	            console.log(e.status);
+	            console.log(e.responseText);
+	        },
+	        //请求完成
+	        complete: function (e) {
+	            $('#load').addClass("hidden");
+	        }
+	    });
+	});
+}
+
+//初始化搜索框,匹配器
+function initTypeSelect() {
+	$('#typeSelect').select2({
+		placeholder: '请搜索或选择类型',
+		theme: "bootstrap4",
+		matcher: customMatcher,
+		width: '400px',
+		templateSelection: formatState
+	});
+	$('#typeSelect').on('select2:select', function (e) {
+	    var data = e.params.data;
+		var typeKey = $(data.element).data("type");
+		typeKey = typeKey == null ? '':typeKey;
+	    $('#condition').prop("sc-type",typeKey);
+		reloadKeywordsByCondition();
 	});
 }
 
@@ -88,9 +179,9 @@ function getData(url) {
 		dataType: "json",
 		//请求地址
 		url: url
-	}).then(function (data) {
-		def.resolve(data);//data 将作为参数传递到Then中.
-	}, function () {
+	}).then(function(data) {
+		def.resolve(data); //data 将作为参数传递到Then中.
+	}, function() {
 		def.reject();
 	})
 	return def.promise();
@@ -98,21 +189,72 @@ function getData(url) {
 
 function getLocalData(url) {
 	var def = $.Deferred();
-	$.getJSON(url).then(function (data) {
-		def.resolve(data);//data 将作为参数传递到Then中.
-	}, function () {
+	$.getJSON(url).then(function(data) {
+		def.resolve(data); //data 将作为参数传递到Then中.
+	}, function() {
 		def.reject();
 	})
 	return def.promise();
 }
 
-function mapIndexData(arrayData){
+function mapTypeData(arrayData) {
+	var emptyOptionEle = '<option data-pinyin="quanbu">全部</option>';
+	$('#typeSelect').append(emptyOptionEle);
 	var data = $.map(arrayData, function(obj) {
-		var text = obj.name_cn + "[" + obj.name + "]";
+		var typeText = obj["type_cn"] + "[" + obj.type + "]";
+		obj.text = typeText;
+		var pinyin = PinyinHelper.convertToPinyinString(obj.type_cn, '', PinyinFormat.WITHOUT_TONE);
+		pinyin = stripDiacritics(pinyin).replace(/[^\w\s]|_/g, "").replace(/\s+/g, "");
+		var optionEle = '<option data-pinyin="' + pinyin + '" data-type="' + obj["type_key"] + '" value="' + obj.type +
+			'">' + typeText + '</option>';
+		$('#typeSelect').append(optionEle);
+		return obj;
+	});
+	return data;
+}
+
+function reloadKeywordsByCondition(){
+	$('#load').removeClass("hidden");
+	var type = $('#condition').prop("sc-type");
+	var size = $('#condition').prop("sc-size");
+	var grade = $('#condition').prop("sc-grade");
+	$("#keywords").empty();
+	$('#all-data option').each(function(index,ele){
+		if(type != null && type.trim() != ''){
+			if (type !=$(ele).attr("data-type") ){
+				return true;
+			}
+		}
+		if(size != null){
+			if (size !=$(ele).attr("data-size") ){
+				return true;
+			}
+		}
+		if(grade != null){
+			if (grade !=$(ele).attr("data-grade") ){
+				return true;
+			}
+		}
+		$("#keywords").append(ele.cloneNode(true));
+	});
+	initSelect2();
+	$('#load').addClass("hidden");
+}
+
+function mapIndexData(arrayData) {
+	var data = $.map(arrayData, function(obj) {
+		var text = obj["name_cn"] + "[" + obj.name + "]";
 		obj.text = text;
-		var pinyin =PinyinHelper.convertToPinyinString(obj.name_cn, '', PinyinFormat.WITHOUT_TONE);
-		pinyin = pinyin.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
-		$('#keywords').append('<option data-pinyin="'+pinyin+'" data-path="'+ obj.path +'" value="'+obj.name+'">'+text+'</option>');
+		var pinyin = PinyinHelper.convertToPinyinString(obj.name_cn, '', PinyinFormat.WITHOUT_TONE);
+		pinyin = stripDiacritics(pinyin).replace(/[^\w\s]|_/g, "").replace(/\s+/g, "");
+		var optionEle = '<option data-pinyin="'+pinyin
+		+'" data-path="'+ obj.path 
+		+'" data-type="'+ obj["show_type_key"]
+		+'" data-size="'+ obj.size 
+		+'" data-grade="'+ obj.grade 
+		+'" value="'+obj.name+'">'+text+'</option>'
+		$('#keywords').append(optionEle);
+		$('#all-data').append(optionEle);
 		return obj;
 	});
 	return data;
