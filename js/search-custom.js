@@ -1,3 +1,4 @@
+var urlVersion = "3.12.1-3";
 //下拉菜单选择后展示什么东西
 function formatState(state) {
 	if (!state.id) {
@@ -12,7 +13,7 @@ function formatState(state) {
 };
 
 
-function stripDiacritics(str){
+function stripDiacritics(str) {
 	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
@@ -38,24 +39,24 @@ function stripDiacritics(str){
 // 				// Clone the data object if there are children
 // 				// This is required as we modify the object to remove any non-matches
 // 				var match = $.extend(true, {}, data);
-		
+
 // 				// Check each child of the option
 // 				for (var c = data.children.length - 1; c >= 0; c--) {
 // 					var child = data.children[c];
-		
+
 // 					var matches = customMatcher(params, child);
-		
+
 // 					// If there wasn't a match, remove the object in the array
 // 					if (matches == null) {
 // 						match.children.splice(c, 1);
 // 					}
 // 				}
-		
+
 // 				// If any children matched, return the new object
 // 				if (match.children.length > 0) {
 // 					return match;
 // 				}
-		
+
 // 				// If there were no matching children, check just the plain object
 // 				return customMatcher(params, match);
 // 			}
@@ -65,7 +66,7 @@ function stripDiacritics(str){
 // 				return null;
 // 			}
 // 			var original = stripDiacritics(data.text).toUpperCase();
-			
+
 // 			var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
 // 			//去掉特殊符号之后的输入关键字
 // 			var term = stripDiacritics(params.term).toUpperCase();
@@ -83,33 +84,33 @@ function stripDiacritics(str){
 // 			width: '400px',
 // 			templateSelection: formatState
 // 		});
-		
+
 // 	});
 // }
 
 
 
 function customMatcher(params, data) {
-		// Always return the object if there is nothing to compare
-		if (params.term == null || params.term.trim() === '') {
-			return data;
-		}
-		//匹配算法
-		//去掉特殊符号之后的原文
-		if (data.text == null || data.text.trim() === '') {
-			return null;
-		}
-		var original = stripDiacritics(data.text).toUpperCase();
-		
-		var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
-		//去掉特殊符号之后的输入关键字
-		var term = stripDiacritics(params.term).toUpperCase();
-		//支持中文英文拼音
-		if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
-			return data;
-		}
-		// If it doesn't contain the term, don't return anything
+	// Always return the object if there is nothing to compare
+	if (params.term == null || params.term.trim() === '') {
+		return data;
+	}
+	//匹配算法
+	//去掉特殊符号之后的原文
+	if (data.text == null || data.text.trim() === '') {
 		return null;
+	}
+	var original = stripDiacritics(data.text).toUpperCase();
+
+	var pinyinOriginal = stripDiacritics($(data.element).data("pinyin")).toUpperCase();
+	//去掉特殊符号之后的输入关键字
+	var term = stripDiacritics(params.term).toUpperCase();
+	//支持中文英文拼音
+	if (original.indexOf(term) > -1 || pinyinOriginal.indexOf(term) > -1) {
+		return data;
+	}
+	// If it doesn't contain the term, don't return anything
+	return null;
 }
 
 //初始化搜索框,匹配器
@@ -118,37 +119,37 @@ function initSelect2() {
 		placeholder: '请输入中/英/拼音（例：箭头/arrow/jiantou）',
 		theme: "bootstrap4",
 		matcher: customMatcher,
-		width: '400px',
+		width: '100%',
 		templateSelection: formatState
 	});
-	$('#keywords').on('select2:select', function (e) {
-	    $('#load').removeClass("hidden");
-	    $('.sc-data').addClass("hidden");
-	    $('table.location').each(function (index, ele) {
-	        $(ele).closest('.bootstrap-table.bootstrap4').addClass("hidden");
-	    });
-	    var data = e.params.data;
+	$('#keywords').on('select2:select', function(e) {
+		$('#load').removeClass("hidden");
+		$('.sc-data').addClass("hidden");
+		$('table.location').each(function(index, ele) {
+			$(ele).closest('.bootstrap-table.bootstrap4').addClass("hidden");
+		});
+		var data = e.params.data;
 		var dataPath = $(data.element).data("path");
-	    $.ajax({
-	        //请求方式
-	        type: "GET",
-	        dataType: "json",
-	        //请求地址
-	        url: "https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@latest"+ "/" + dataPath,
-	        //请求成功
-	        success: function (result) {
-	            addData(result);
-	        },
-	        //请求失败，包含具体的错误信息
-	        error: function (e) {
-	            console.log(e.status);
-	            console.log(e.responseText);
-	        },
-	        //请求完成
-	        complete: function (e) {
-	            $('#load').addClass("hidden");
-	        }
-	    });
+		$.ajax({
+			//请求方式
+			type: "GET",
+			dataType: "json",
+			//请求地址
+			url: "https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+ urlVersion + "/" + dataPath,
+			//请求成功
+			success: function(result) {
+				addData(result);
+			},
+			//请求失败，包含具体的错误信息
+			error: function(e) {
+				console.log(e.status);
+				console.log(e.responseText);
+			},
+			//请求完成
+			complete: function(e) {
+				$('#load').addClass("hidden");
+			}
+		});
 	});
 }
 
@@ -158,14 +159,50 @@ function initTypeSelect() {
 		placeholder: '请搜索或选择类型',
 		theme: "bootstrap4",
 		matcher: customMatcher,
-		width: '400px',
+		width: '100%',
 		templateSelection: formatState
 	});
-	$('#typeSelect').on('select2:select', function (e) {
-	    var data = e.params.data;
+	$('#typeSelect').on('select2:select', function(e) {
+		var data = e.params.data;
 		var typeKey = $(data.element).data("type");
-		typeKey = typeKey == null ? '':typeKey;
-	    $('#condition').prop("sc-type",typeKey);
+		typeKey = typeKey == null ? '' : typeKey;
+		$('#condition').prop("sc-type", typeKey);
+		reloadKeywordsByType();
+	});
+}
+//初始化搜索框,匹配器
+function initSizeSelect() {
+	var emptyOptionEle = '<option selected="true">全部尺寸</option>';
+	$('#sizeSelect').prepend(emptyOptionEle);
+	$('#sizeSelect').select2({
+		placeholder: '请搜索或选择尺寸',
+		theme: "bootstrap4",
+		width: '100%',
+		templateSelection: formatState
+	});
+	$('#sizeSelect').on('select2:select', function(e) {
+		var data = e.params.data;
+		var size = data.text;
+		size = size == null ||isNaN(Number(size)) ? '' : size;
+		$('#condition').prop("sc-size", size);
+		reloadKeywordsByCondition();
+	});
+}
+
+function initGradeSelect() {
+	var emptyOptionEle = '<option selected="true">全部级别</option>';
+	$('#gradeSelect').prepend(emptyOptionEle);
+	$('#gradeSelect').select2({
+		placeholder: '请搜索或选择级别',
+		theme: "bootstrap4",
+		width: '100%',
+		templateSelection: formatState
+	});
+	$('#gradeSelect').on('select2:select', function(e) {
+		var data = e.params.data;
+		var grade = data.text;
+		grade = grade == null||isNaN(Number(grade)) ? '' : grade;
+		$('#condition').prop("sc-grade", grade);
 		reloadKeywordsByCondition();
 	});
 }
@@ -198,6 +235,7 @@ function getLocalData(url) {
 }
 
 function mapTypeData(arrayData) {
+	$('#typeIndex').html(JSON.stringify(arrayData));
 	var emptyOptionEle = '<option data-pinyin="quanbu">全部</option>';
 	$('#typeSelect').append(emptyOptionEle);
 	var data = $.map(arrayData, function(obj) {
@@ -213,25 +251,66 @@ function mapTypeData(arrayData) {
 	return data;
 }
 
-function reloadKeywordsByCondition(){
+function reloadKeywordsByType() {
+	$('#load').removeClass("hidden");
+	var type = $('#condition').prop("sc-type");
+	$("#keywords").empty();
+	var emptyOptionEle = '<option />';
+	$('#keywords').prepend(emptyOptionEle);
+	$("#sizeSelect").empty();
+	$("#gradeSelect").empty();
+	//填充尺寸和级别下拉框
+	if (type != null && type.trim() != '') {
+		var jsonType = JSON.parse($('#typeIndex').html());
+		$(jsonType).each(function(idx,ele){
+			if (type == ele["type_key"]){
+				$(ele["size_set"]).each(function(idx,sizeNum){
+					var sizeOptionEle = '<option value=' + sizeNum +'>' + sizeNum + '</option>';
+					$('#sizeSelect').append(sizeOptionEle);
+				});
+				$(ele["grade_set"]).each(function(idx,gradeNum){
+					var gradeOptionEle = '<option value=' + gradeNum + '>' + gradeNum + '</option>';
+					$('#gradeSelect').append(gradeOptionEle);
+				});
+			}
+		});
+	}
+	$('#all-data option').each(function(index, ele) {
+		if (type != null && type.trim() != '') {
+			if (type != $(ele).attr("data-type")) {
+				return true;
+			}
+		}
+		$("#keywords").append(ele.cloneNode(true));
+	});
+	initSelect2();
+	initSizeSelect();
+	initGradeSelect();
+	$('#load').addClass("hidden");
+}
+
+function reloadKeywordsByCondition() {
 	$('#load').removeClass("hidden");
 	var type = $('#condition').prop("sc-type");
 	var size = $('#condition').prop("sc-size");
 	var grade = $('#condition').prop("sc-grade");
+	console.log(grade)
 	$("#keywords").empty();
-	$('#all-data option').each(function(index,ele){
-		if(type != null && type.trim() != ''){
-			if (type !=$(ele).attr("data-type") ){
+	var emptyOptionEle = '<option />';
+	$('#keywords').prepend(emptyOptionEle);
+	$('#all-data option').each(function(index, ele) {
+		if (type != null && type.trim() != '') {
+			if (type != $(ele).attr("data-type")) {
 				return true;
 			}
 		}
-		if(size != null){
-			if (size !=$(ele).attr("data-size") ){
+		if (size != null && size.trim() != '') {
+			if (size != $(ele).attr("data-size")) {
 				return true;
 			}
 		}
-		if(grade != null){
-			if (grade !=$(ele).attr("data-grade") ){
+		if (grade != null && grade.trim() != '') {
+			if (grade != $(ele).attr("data-grade")) {
 				return true;
 			}
 		}
@@ -247,12 +326,12 @@ function mapIndexData(arrayData) {
 		obj.text = text;
 		var pinyin = PinyinHelper.convertToPinyinString(obj.name_cn, '', PinyinFormat.WITHOUT_TONE);
 		pinyin = stripDiacritics(pinyin).replace(/[^\w\s]|_/g, "").replace(/\s+/g, "");
-		var optionEle = '<option data-pinyin="'+pinyin
-		+'" data-path="'+ obj.path 
-		+'" data-type="'+ obj["show_type_key"]
-		+'" data-size="'+ obj.size 
-		+'" data-grade="'+ obj.grade 
-		+'" value="'+obj.name+'">'+text+'</option>'
+		var optionEle = '<option data-pinyin="' + pinyin +
+			'" data-path="' + obj.path +
+			'" data-type="' + obj["show_type_key"] +
+			'" data-size="' + obj.size +
+			'" data-grade="' + obj.grade +
+			'" value="' + obj.name + '">' + text + '</option>'
 		$('#keywords').append(optionEle);
 		$('#all-data').append(optionEle);
 		return obj;
@@ -266,15 +345,15 @@ function addData(result) {
 	$('table.location').each(function(index, ele) {
 		$(ele).closest('.bootstrap-table.bootstrap4').addClass("hidden");
 	});
-	$('.btn.localtion input').prop("checked", false);
-	$('label.btn.localtion').addClass("hidden").removeClass("active");
+	$('.btn.tab input').prop("checked", false);
+	$('label.btn.tab').addClass("hidden").removeClass("active");
 	//数据
 	var arrayData = eval('(' + "[" + JSON.stringify(result) + "]" + ')');
 	$('#baseInfotable').bootstrapTable('load', arrayData);
 	$('#descriptiontable').bootstrapTable('load', arrayData);
 	if (result.can_buy) {
 		$('#shopBuyTableInput').prop("checked", true);
-		$('#shopBuyTableInput').parent("label.btn.localtion").addClass("active").removeClass("hidden");
+		$('#shopBuyTableInput').parent("label.btn.tab").addClass("active").removeClass("hidden");
 		var buyData = result.shop_buy.filter(item => item.layout_name.indexOf('CryAstro') < 0);
 		$('#shopBuyTable').bootstrapTable('destroy');
 		if (result.commodity) {
@@ -286,7 +365,7 @@ function addData(result) {
 	}
 	if (result.can_sell) {
 		$('#shopSellTableInput').prop("checked", true);
-		$('#shopSellTableInput').parent("label.btn.localtion").addClass("active").removeClass("hidden");
+		$('#shopSellTableInput').parent("label.btn.tab").addClass("active").removeClass("hidden");
 		var sellData = result.shop_sell.filter(item => item.layout_name.indexOf('CryAstro') < 0);
 		$('#shopSellTable').bootstrapTable('destroy');
 		if (result.commodity) {
@@ -298,7 +377,7 @@ function addData(result) {
 	}
 	if (result.can_rent) {
 		$('#shopRentTableInput').prop("checked", true);
-		$('#shopRentTableInput').parent("label.btn.localtion").addClass("active").removeClass("hidden");
+		$('#shopRentTableInput').parent("label.btn.tab").addClass("active").removeClass("hidden");
 		var rentData = result.shop_rent.filter(item => item.layout_name.indexOf('CryAstro') < 0);
 		$('#shopRentTable').bootstrapTable('load', rentData);
 		$('#shopRentTable').closest('.bootstrap-table.bootstrap4').removeClass("hidden");
@@ -489,7 +568,25 @@ function getCommoditySellOptions() {
 
 (function($) {
 
-	"use strict";
+	$('#init').removeClass("hidden");
+	$(document).ready(function() {
+		$.when(
+		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/index.json"), 
+		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/ext_index.json")
+		)
+			.then(function(mainResult, extResult) {
+				$('#version').text(mainResult.version);
+				mapIndexData(mainResult.index);
+				$('#init').addClass("hidden");
+				mapTypeData(mainResult["type_list"]);
+				initSelect2();
+				initTypeSelect();
+				initSizeSelect();
+				initGradeSelect();
+			}, function() {
+				console.log('error...')
+			});
+	});
 
 	// PRE LOADER
 	$(window).on('load', function() {
