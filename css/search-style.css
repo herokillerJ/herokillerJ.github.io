@@ -78,8 +78,7 @@ cursor: pointer;
 }
 
 .bootstrap-table {
-	overflow: auto;
-	max-width: 1140px;
+	max-width: 95vw;
 }
 
 
