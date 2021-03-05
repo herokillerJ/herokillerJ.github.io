@@ -573,9 +573,9 @@ function getCommoditySellOptions() {
 		$.when(
 		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/index.json"), 
 		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/ext_index.json")
-		)
-			.then(function(mainResult, extResult) {
+		).then(function(mainResult, extResult) {
 				$('#version').text(mainResult.version);
+				mapIndexData(extResult.index);
 				mapIndexData(mainResult.index);
 				$('#init').addClass("hidden");
 				mapTypeData(mainResult["type_list"]);
