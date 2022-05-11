@@ -1,4 +1,4 @@
-var urlVersion = "latest";
+var urlVersion = "3.17.0";
 //下拉菜单选择后展示什么东西
 function formatState(state) {
 	if (!state.id) {
