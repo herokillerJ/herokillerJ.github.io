@@ -135,7 +135,7 @@ function initSelect2() {
 			type: "GET",
 			dataType: "json",
 			//请求地址
-			url: "https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+ urlVersion + "/" + dataPath,
+			url: "https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+ urlVersion + "/" + dataPath,
 			//请求成功
 			success: function(result) {
 				addData(result);
@@ -571,8 +571,8 @@ function getCommoditySellOptions() {
 	$('#init').removeClass("hidden");
 	$(document).ready(function() {
 		$.when(
-		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/index.json"), 
-		getData("https://cdn.jsdelivr.net/gh/herokillerJ/starcitizen-data@"+urlVersion+"/ext_index.json")
+		getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/index.json"),
+		getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/ext_index.json")
 		).then(function(mainResult, extResult) {
 				$('#version').text(mainResult.version);
 				mapIndexData(extResult.index);
@@ -604,7 +604,7 @@ function getCommoditySellOptions() {
 	// ABOUT SLIDER
 	$('body').vegas({
 		slides: [{
-			src: 'https://cdn.jsdelivr.net/gh/herokillerJ/imgur/wftank.cn/home/1th-section.jpg'
+			src: 'https://cdn.statically.io/gh/herokillerJ/imgur/wftank.cn/home/1th-section.jpg'
 		}],
 		timer: false,
 		transition: ['zoomOut', ]
