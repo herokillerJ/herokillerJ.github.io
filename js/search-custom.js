@@ -130,25 +130,31 @@ function initSelect2() {
 		});
 		var data = e.params.data;
 		var dataPath = $(data.element).data("path");
-		$.ajax({
-			//请求方式
-			type: "GET",
-			dataType: "json",
-			//请求地址
-			url: "https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+ urlVersion + "/" + dataPath,
-			//请求成功
-			success: function(result) {
-				addData(result);
-			},
-			//请求失败，包含具体的错误信息
-			error: function(e) {
-				console.log(e.status);
-				console.log(e.responseText);
-			},
-			//请求完成
-			complete: function(e) {
-				$('#load').addClass("hidden");
-			}
+		//链接形式
+		// $.ajax({
+		// 	//请求方式
+		// 	type: "GET",
+		// 	dataType: "json",
+		// 	//请求地址
+		// 	url: "https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+ urlVersion + "/" + dataPath,
+		// 	//请求成功
+		// 	success: function(result) {
+		// 		addData(result);
+		// 	},
+		// 	//请求失败，包含具体的错误信息
+		// 	error: function(e) {
+		// 		console.log(e.status);
+		// 		console.log(e.responseText);
+		// 	},
+		// 	//请求完成
+		// 	complete: function(e) {
+		// 		$('#load').addClass("hidden");
+		// 	}
+		// });
+		//本地形式
+		$.getJSON("/sc-data/"+dataPath, function (data){
+			addData(data);
+			$('#load').addClass("hidden");
 		});
 	});
 }
@@ -571,8 +577,10 @@ function getCommoditySellOptions() {
 	$('#init').removeClass("hidden");
 	$(document).ready(function() {
 		$.when(
-		getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/index.json"),
-		getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/ext_index.json")
+		// getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/index.json"),
+		// getData("https://cdn.statically.io/gh/herokillerJ/starcitizen-data/"+urlVersion+"/ext_index.json"),
+		getLocalData("/sc-data/index.json"),
+		getLocalData("/sc-data/ext_index.json"),
 		).then(function(mainResult, extResult) {
 				$('#version').text(mainResult.version);
 				mapIndexData(extResult.index);
@@ -604,7 +612,7 @@ function getCommoditySellOptions() {
 	// ABOUT SLIDER
 	$('body').vegas({
 		slides: [{
-			src: 'https://cdn.statically.io/gh/herokillerJ/imgur/wftank.cn/home/1th-section.jpg'
+			src: '/img/main/home/1th-section.jpg'
 		}],
 		timer: false,
 		transition: ['zoomOut', ]
