@@ -1,0 +1,87 @@
+
+/* 修改弹性布局方向 */
+.flex-column{
+    /* flex-direction:row !important; */
+    margin-bottom: 5;
+}
+
+/* 为下拉列表设置右边距以视觉舒适 */
+.no-gutters>.col, .no-gutters>[class*=col-]{
+    margin-right: 0.3em;
+}
+
+
+/* 为类型列表设置较长的固定宽度防止列表文字需要换行显示 */
+#typeSelect[name="type"]+.select2-container{
+    width: 20em !important;
+}
+
+#sizeSelect[name="size"]+.select2-container{
+    width: 10em !important;
+}
+
+#gradeSelect+.select2-container{
+    width: 10em !important;
+}
+
+#keywords+.select2-container{
+    width: 30em !important;
+}
+
+
+.shuiping{
+    display: flex;
+    flex-direction: row !important;
+    width: fit-content;
+    margin: auto;
+}
+
+.shuiping .col{
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+}
+
+.table{
+    color: white;
+}
+
+
+tr{
+    background-color: #555d61;
+}
+
+/* 鼠标悬浮于列上时改变背景色以方便视觉定位 */
+.table-hover tbody tr:hover{
+    background-color: rgb(78 81 85);
+}
+
+/* 为整个页面设置下边距 */
+.justify-content-center{
+    margin-bottom: 5em;
+}
+
+/* 鼠标悬浮于列表上时改变字色以方便视觉定位 */
+.table-hover > tbody > tr:hover > th {color: #bdfd59;cursor: pointer;}
+
+
+/* 修改信息文字颜色 */
+.float-left,.pagination-detail{
+    color:aliceblue !important;
+}
+
+
+
+/* 修改分页布局方式 */
+.bootstrap-table .fixed-table-pagination>.pagination-detail .page-list{
+    display: inline-flex;
+}
+
+/* 修改分页按钮间距 */
+div.float-left.pagination-detail > span.page-list > span > button{
+    margin-right: 0.2em;
+    margin-left: 0.2em;
+    position: relative;
+    top: -0.2em;
+}
+
+
